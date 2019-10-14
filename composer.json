@@ -1,0 +1,25 @@
+{
+    "name": "digistorm/omnipay-school-easy-pay",
+    "type": "library",
+    "description": "School EasyPay driver for the Omnipay payment processing library",
+    "keywords": [
+        "gateway",
+        "merchant",
+        "omnipay",
+        "pay",
+        "payment",
+    ],
+    "homepage": "https://github.com/digistorm/omnipay-school-easy-pay",
+    "license": "MIT",
+    "autoload": {
+        "psr-4": { "Omnipay\\SchoolEasyPay\\" : "src/" }
+    },
+    "require": {
+        "omnipay/common": "^3"
+    },
+    "require-dev": {
+        "omnipay/tests": "^3",
+        "phpunit/phpunit": "^5.7|^6"
+    },
+    "prefer-stable": true
+}
