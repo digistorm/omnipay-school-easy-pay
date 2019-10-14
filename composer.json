@@ -7,7 +7,7 @@
         "merchant",
         "omnipay",
         "pay",
-        "payment",
+        "payment"
     ],
     "homepage": "https://github.com/digistorm/omnipay-school-easy-pay",
     "license": "MIT",
