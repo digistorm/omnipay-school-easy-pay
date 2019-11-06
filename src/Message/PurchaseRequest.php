@@ -14,44 +14,69 @@ class PurchaseRequest extends AbstractRequest
     public function getData()
     {
         $this->validate(
-            'customerNumber',
-            'amount',
-            'currency'
+            'cardProxy',
+            'customerReference',
+            'amount'
         );
 
         $data = [
-            'customerNumber' => $this->getCustomerNumber(),
-            'transactionType' => 'payment',
-            'currency' => $this->getCurrency(),
+            'cardProxy' => $this->getCardProxy(),
+            'customerReference' => $this->getCustomerReference(),
         ];
+
+        if ($this->getCard()) {
+            $card = $this->getCard();
+            $data['customerName'] = $card->getName();
+        }
 
         // Has the Money class been used to set the amount?
         if ($this->getAmount() instanceof Money) {
             // Ensure principal amount is formatted as decimal string
-            $data['principalAmount'] = (new DecimalMoneyFormatter(new ISOCurrencies()))->format($this->getAmount());
+            $data['paymentAmount'] = (new DecimalMoneyFormatter(new ISOCurrencies()))->format($this->getAmount());
         } else {
-            $data['principalAmount'] = $this->getAmount();
+            $data['paymentAmount'] = $this->getAmount();
         }
 
-        if ($this->getOrderNumber()) {
-            $data['orderNumber'] = $this->getOrderNumber();
-        }
-        if ($this->getMerchantId()) {
-            $data['merchantId'] = $this->getMerchantId();
-        }
-        if ($this->getSingleUseTokenId()){
-            $data['singleUseTokenId'] = $this->getSingleUseTokenId();
-        }
-        if ($this->getCustomerIpAddress()){
-            $data['customerIpAddress'] = $this->getCustomerIpAddress();
+        if ($this->getMerchantUniquePaymentId()) {
+            $data['merchantUniquePaymentId'] = $this->getMerchantUniquePaymentId();
         }
 
         return $data;
     }
 
+    public function getCardProxy()
+    {
+        return $this->getParameter('cardProxy');
+    }
+
+    public function setCardProxy($value)
+    {
+        return $this->setParameter('cardProxy', $value);
+    }
+
+    public function getCustomerReference()
+    {
+        return $this->getParameter('customerReference');
+    }
+
+    public function setCustomerReference($value)
+    {
+        return $this->setParameter('customerReference', $value);
+    }
+
+    public function getMerchantUniquePaymentId()
+    {
+        return $this->getParameter('merchantUniquePaymentId');
+    }
+
+    public function setMerchantUniquePaymentId($value)
+    {
+        return $this->setParameter('merchantUniquePaymentId', $value);
+    }
+
     public function getEndpoint()
     {
-        return $this->getBaseEndpoint() . '/transactions';
+        return $this->getBaseEndpoint() . '/payments';
     }
 
     public function getHttpMethod()
@@ -62,5 +87,14 @@ class PurchaseRequest extends AbstractRequest
     public function getUseSecretKey()
     {
         return true;
+    }
+
+    /**
+     * @param $data
+     * @return \Omnipay\SchoolEasyPay\Message\PurchaseResponse
+     */
+    protected function createResponse($data)
+    {
+        return $this->response = new PurchaseResponse($this, $data);
     }
 }

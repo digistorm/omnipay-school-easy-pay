@@ -7,7 +7,7 @@ use Omnipay\Common\Message\AbstractResponse;
 /**
  * Response class for all SchoolEasyPay requests
  */
-class Response extends AbstractResponse
+class PurchaseResponse extends AbstractResponse
 {
     /** @var string Request ID */
     protected $requestId = null;
@@ -27,7 +27,7 @@ class Response extends AbstractResponse
             return true;
         }
 
-        if ($code === 201) {   // Created
+        if ($code === 201 && $this->isApproved()) {   // Created
             return true;
         }
 
@@ -44,9 +44,7 @@ class Response extends AbstractResponse
      */
     public function isApproved()
     {
-        return in_array($this->getStatus(), [
-            'Successful',
-        ]);
+        return $this->getStatus() === 'Successful';
     }
 
     /**
@@ -55,18 +53,7 @@ class Response extends AbstractResponse
      */
     public function isPending()
     {
-        return (
-            $this->getStatus() === 'pending'
-        );
-    }
-
-    /**
-     * Get Transaction ID
-     * @return string|null
-     */
-    public function getTransactionId()
-    {
-        return $this->getData('transactionId');
+        return $this->getStatus() === 'Pending';
     }
 
     /**
@@ -75,25 +62,12 @@ class Response extends AbstractResponse
      */
     public function getTransactionReference()
     {
-        return $this->getData('receiptNumber');
+        return $this->getData('paymentReference');
     }
 
-    /**
-     * Get Customer Number
-     * @return string|null
-     */
-    public function getCustomerNumber()
+    public function getSettlementDate()
     {
-        return $this->getData('customerNumber');
-    }
-
-    /**
-     * Get Contact details
-     * @return array Customer contact
-     */
-    public function getContact()
-    {
-        return $this->getData('contact');
+        return $this->getData('settlementDate');
     }
 
     /**
@@ -257,41 +231,5 @@ class Response extends AbstractResponse
         $statusTexts = \Symfony\Component\HttpFoundation\Response::$statusTexts;
 
         return (isset($statusTexts[$code])) ? $statusTexts[$code] : null;
-    }
-
-    /**
-     * Get transaction type
-     * @return string|null Transaction type
-     */
-    public function getTransactionType()
-    {
-        return $this->getData('transactionType');
-    }
-
-    /**
-     * Get payment method
-     * @return string|null Payment method
-     */
-    public function getPaymentMethod()
-    {
-        return $this->getData('paymentMethod');
-    }
-
-    /**
-     * Get credit card information
-     * @return string|null Transaction credit card details
-     */
-    public function getCreditCard()
-    {
-        return $this->getData('creditCard');
-    }
-
-    /**
-     * Get bank account information
-     * @return string|null Transaction bank account details
-     */
-    public function getBankAccount()
-    {
-        return $this->getData('bankAccount');
     }
 }

@@ -54,26 +54,6 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
         return $this->setParameter('password', $value);
     }
 
-    public function getCustomerNumber()
-    {
-        return $this->getParameter('customerNumber');
-    }
-
-    public function setCustomerNumber($value)
-    {
-        return $this->setParameter('customerNumber', $value);
-    }
-
-    public function getTransactionType()
-    {
-        return $this->getParameter('transactionType');
-    }
-
-    public function setTransactionType($value)
-    {
-        return $this->setParameter('transactionType', $value);
-    }
-
     public function getAmount()
     {
         return $this->getParameter('amount');
@@ -82,49 +62,6 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
     public function setAmount($value)
     {
         return $this->setParameter('amount', $value);
-    }
-
-    public function getPrincipalAmount()
-    {
-        return $this->getParameter('principalAmount');
-    }
-
-    public function setPrincipalAmount($value)
-    {
-        return $this->setParameter('principalAmount', $value);
-    }
-
-    public function getCurrency()
-    {
-        // PayWay expects lowercase currency values
-        return ($this->getParameter('currency'))
-            ? strtolower($this->getParameter('currency'))
-            : null;
-    }
-
-    public function setCurrency($value)
-    {
-        return $this->setParameter('currency', $value);
-    }
-
-    public function getOrderNumber()
-    {
-        return $this->getParameter('orderNumber');
-    }
-
-    public function setOrderNumber($value)
-    {
-        return $this->setParameter('orderNumber', $value);
-    }
-
-    public function getCustomerIpAddress()
-    {
-        return $this->getParameter('customerIpAddress');
-    }
-
-    public function setCustomerIpAddress($value)
-    {
-        return $this->setParameter('customerIpAddress', $value);
     }
 
     /**
@@ -207,7 +144,6 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
         // save additional info
         $this->response->setHttpResponseCode($response->getStatusCode());
-        $this->response->setTransactionType($this->getTransactionType());
 
         return $this->response;
     }

@@ -15,23 +15,18 @@ class PurchaseRequestTest extends TestCase
     public function setUp()
     {
         $this->request = new PurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
-        $this->request->initialize([
-            'amount' => '10.00',
-            'currency' => 'USD',
-        ]);
     }
 
     public function testGetData()
     {
-        $this->request->setCustomerNumber('ABC123');
-        $this->request->setSingleUseTokenId('EFG789');
+        $this->request->setCardProxy('bdd4c12345e54b00b4e1a2b309442a07');
+        $this->request->setAmount(12.50);
+        $this->request->setCustomerReference('ABC123');
 
         $data = $this->request->getData();
 
-        $this->assertEquals('payment', $data['transactionType']);
-        $this->assertEquals('10.00',   $data['principalAmount']);
-        $this->assertEquals('usd',     $data['currency']);
-        $this->assertEquals('ABC123',  $data['customerNumber']);
-        $this->assertEquals('EFG789',  $data['singleUseTokenId']);
+        $this->assertEquals('bdd4c12345e54b00b4e1a2b309442a07', $data['cardProxy']);
+        $this->assertEquals('12.50', $data['paymentAmount']);
+        $this->assertEquals('ABC123', $data['customerReference']);
     }
 }
