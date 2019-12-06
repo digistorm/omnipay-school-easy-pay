@@ -61,6 +61,14 @@ class Response extends AbstractResponse
     }
 
     /**
+     * @return string|null
+     */
+    public function getSettlementDate()
+    {
+        return $this->getData('settlementDate');
+    }
+
+    /**
      * Get Transaction ID
      * @return string|null
      */
