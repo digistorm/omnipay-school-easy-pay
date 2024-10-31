@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\SchoolEasyPay\Message;
 
+use Omnipay\Common\Exception\InvalidCreditCardException;
 use Omnipay\Common\Exception\InvalidRequestException;
 
 /**
@@ -9,7 +12,11 @@ use Omnipay\Common\Exception\InvalidRequestException;
  */
 class CreateSingleUseCardTokenRequest extends AbstractRequest
 {
-    public function getData()
+    /**
+     * @throws InvalidRequestException
+     * @throws InvalidCreditCardException
+     */
+    public function getData(): array
     {
         if (!$this->getParameter('card')) {
             throw new InvalidRequestException('You must pass a "card" parameter.');
@@ -17,28 +24,26 @@ class CreateSingleUseCardTokenRequest extends AbstractRequest
 
         $this->getCard()->validate();
 
-        // Two digit month.
-        $expiryDateMonth = str_pad($this->getCard()->getExpiryMonth(), 2, 0, STR_PAD_LEFT);
+        $expiryDateMonthAsString = (string)$this->getCard()->getExpiryMonth();
+        $expiryDateYearAsString = (string)$this->getCard()->getExpiryYear();
+        // Two-digit month.
+        $expiryDateMonth = str_pad($expiryDateMonthAsString, 2, '0', STR_PAD_LEFT);
         // Last two digits of the year only.
-        $expiryDateYear = substr($this->getCard()->getExpiryYear(), strlen($this->getCard()->getExpiryYear()) - 2);
+        $expiryDateYear = substr($expiryDateYearAsString, strlen($expiryDateYearAsString) - 2);
 
         return [
             'cardNumber' => $this->getCard()->getNumber(),
             'cardHolderName' => $this->getCard()->getName(),
-            // 'cvn' => $this->getCard()->getCvv(), This isn't in the API docs...
             'expiry' => sprintf('%s/%s', $expiryDateMonth, $expiryDateYear),
         ];
     }
 
-    /**
-     * @return mixed
-     */
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
         return $this->getBaseEndpoint() . '/cardproxies';
     }
 
-    public function getHttpMethod()
+    public function getHttpMethod(): string
     {
         return 'POST';
     }

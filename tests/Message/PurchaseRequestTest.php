@@ -1,23 +1,25 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\SchoolEasyPay\Test\Message;
 
-use Omnipay\Tests\TestCase;
 use Omnipay\SchoolEasyPay\Message\PurchaseRequest;
+use Omnipay\Tests\TestCase;
 
 class PurchaseRequestTest extends TestCase
 {
     /**
-     * @var \Omnipay\SchoolEasyPay\Message\PurchaseRequest
+     * @var PurchaseRequest
      */
     protected $request;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->request = new PurchaseRequest($this->getHttpClient(), $this->getHttpRequest());
     }
 
-    public function testGetData()
+    public function testGetData(): void
     {
         $this->request->setCardProxy('bdd4c12345e54b00b4e1a2b309442a07');
         $this->request->setAmount(12.50);

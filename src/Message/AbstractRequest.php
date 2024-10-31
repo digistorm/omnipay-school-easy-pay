@@ -1,15 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\SchoolEasyPay\Message;
+
+use Omnipay\Common\Message\ResponseInterface;
 
 /**
  * @link https://www.payway.com.au/rest-docs/index.html
  */
 abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 {
-    abstract public function getEndpoint();
+    abstract public function getEndpoint(): string;
 
-    public function getBaseEndpoint()
+    public function getBaseEndpoint(): string
     {
         return $this->getTestMode()
             ? 'https://apiuat.schooleasypay.com.au/v2'
@@ -18,89 +22,71 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
     /**
      * Get API publishable key
-     * @return string
      */
-    public function getApiKey()
+    public function getApiKey(): ?string
     {
         return $this->getParameter('apiKey');
     }
 
     /**
      * Set API publishable key
-     * @param  string $value API publishable key
      */
-    public function setApiKey($value)
+    public function setApiKey(string $value): self
     {
         return $this->setParameter('apiKey', $value);
     }
 
-    public function getUsername()
+    public function getUsername(): ?string
     {
         return $this->getParameter('username');
     }
 
-    public function setUsername($value)
+    public function setUsername(string $value): self
     {
         return $this->setParameter('username', $value);
     }
 
-    public function getPassword()
+    public function getPassword(): ?string
     {
         return $this->getParameter('password');
     }
 
-    public function setPassword($value)
+    public function setPassword(string $value): self
     {
         return $this->setParameter('password', $value);
     }
 
-    public function getAmount()
-    {
-        return $this->getParameter('amount');
-    }
-
-    public function setAmount($value)
-    {
-        return $this->setParameter('amount', $value);
-    }
-
     /**
      * Get Idempotency Key
-     * @return string Idempotency Key
      */
-    public function getIdempotencyKey()
+    public function getIdempotencyKey(): ?string
     {
         return $this->getParameter('idempotencyKey') ?: uniqid();
     }
 
     /**
      * Set Idempotency Key
-     * @param  string $value Idempotency Key
      */
-    public function setIdempotencyKey($value)
+    public function setIdempotencyKey(string $value): self
     {
         return $this->setParameter('idempotencyKey', $value);
     }
 
     /**
      * Get HTTP method
-     * @return string HTTP method (GET, PUT, etc)
      */
-    public function getHttpMethod()
+    public function getHttpMethod(): string
     {
         return 'GET';
     }
 
     /**
      * Get request headers
-     * @return array Request headers
      */
-    public function getRequestHeaders()
+    public function getRequestHeaders(): array
     {
         // common headers
-        $headers = array(
-            'Accept' => 'application/json',
-        );
+        $headers = ['Accept' => 'application/json'];
 
         // set content type
         if ($this->getHttpMethod() !== 'GET') {
@@ -117,12 +103,8 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
     /**
      * Send data request
-     *
-     * @param $data
-     *
-     * @return \Omnipay\Common\Message\ResponseInterface|\Omnipay\SchoolEasyPay\Message\Response
      */
-    public function sendData($data)
+    public function sendData(mixed $data): ResponseInterface
     {
         $headers = $this->getRequestHeaders();
         $headers['Api-Key'] = $this->getApiKey();
@@ -134,7 +116,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
             $this->getHttpMethod(),
             $this->getEndpoint(),
             $headers,
-            $body,
+            $body ?: null,
             '1.2' // Enforce TLS v1.2
         );
 

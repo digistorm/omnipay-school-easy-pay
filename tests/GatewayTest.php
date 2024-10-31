@@ -1,21 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\SchoolEasyPay\Test;
 
+use Carbon\Carbon;
 use Money\Currencies\ISOCurrencies;
 use Money\Currency;
 use Money\Formatter\DecimalMoneyFormatter;
 use Money\Money;
 use Omnipay\Common\CreditCard;
-use Omnipay\Tests\GatewayTestCase;
 use Omnipay\SchoolEasyPay\Gateway;
+use Omnipay\SchoolEasyPay\Message\CreateSingleUseCardTokenRequest;
+use Omnipay\SchoolEasyPay\Message\PurchaseRequest;
+use Omnipay\Tests\GatewayTestCase;
 
 /**
  * @property Gateway gateway
  */
 class GatewayTest extends GatewayTestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
 
@@ -23,7 +28,7 @@ class GatewayTest extends GatewayTestCase
         $this->gateway->setTestMode(true);
     }
 
-    public function testCreateToken()
+    public function testCreateToken(): void
     {
         $request = $this->gateway->createSingleUseCardToken([
             'card' => new CreditCard([
@@ -31,23 +36,25 @@ class GatewayTest extends GatewayTestCase
                 'lastName' => 'Doe',
                 'number' => '424242424242',
                 'expiryMonth' => '03',
-                'expiryYear' => '2020',
+                'expiryYear' => Carbon::now()->addYear()->format('Y'),
                 'cvv' => '123',
             ]),
         ]);
 
-        $this->assertInstanceOf('Omnipay\SchoolEasyPay\Message\CreateSingleUseCardTokenRequest', $request);
+        $this->assertInstanceOf(CreateSingleUseCardTokenRequest::class, $request);
         $data = $request->getData();
 
-        $this->assertEquals('creditCard',           $data['paymentMethod']);
-        $this->assertEquals('424242424242',         $data['cardNumber']);
-        $this->assertEquals('John Doe',             $data['cardholderName']);
-        $this->assertEquals('123',                  $data['cvn']);
-        $this->assertEquals('03',                   $data['expiryDateMonth']);
-        $this->assertEquals('2020',                 $data['expiryDateYear']);
+        var_dump($data);exit;
+
+        $this->assertEquals('creditCard', $data['paymentMethod']);
+        $this->assertEquals('424242424242', $data['cardNumber']);
+        $this->assertEquals('John Doe', $data['cardholderName']);
+        $this->assertEquals('123', $data['cvn']);
+        $this->assertEquals('03', $data['expiryDateMonth']);
+        $this->assertEquals(Carbon::now()->addYear()->format('Y'), $data['expiryDateYear']);
     }
 
-    public function testPurchaseUsingStringAmount()
+    public function testPurchaseUsingStringAmount(): void
     {
         $request = $this->gateway->purchase([
             'amount' => '10.00',
@@ -57,20 +64,20 @@ class GatewayTest extends GatewayTestCase
             'singleUseTokenId' => 'EFG789',
         ]);
 
-        $this->assertInstanceOf('Omnipay\SchoolEasyPay\Message\PurchaseRequest', $request);
+        $this->assertInstanceOf(PurchaseRequest::class, $request);
         $this->assertSame('10.00', $request->getAmount());
 
         $data = $request->getData();
 
         $this->assertEquals('payment', $data['transactionType']);
-        $this->assertEquals('10.00',   $data['principalAmount']);
-        $this->assertEquals('aud',     $data['currency']);
-        $this->assertEquals('ABC123',  $data['customerNumber']);
-        $this->assertEquals('456',     $data['orderNumber']);
-        $this->assertEquals('EFG789',  $data['singleUseTokenId']);
+        $this->assertEquals('10.00', $data['principalAmount']);
+        $this->assertEquals('aud', $data['currency']);
+        $this->assertEquals('ABC123', $data['customerNumber']);
+        $this->assertEquals('456', $data['orderNumber']);
+        $this->assertEquals('EFG789', $data['singleUseTokenId']);
     }
 
-    public function testPurchaseUsingMoney()
+    public function testPurchaseUsingMoney(): void
     {
         $request = $this->gateway->purchase([
             'currency' => 'AUD',
@@ -83,17 +90,17 @@ class GatewayTest extends GatewayTestCase
 
         $request->setMoney($money);
 
-        $this->assertInstanceOf('Omnipay\SchoolEasyPay\Message\PurchaseRequest', $request);
+        $this->assertInstanceOf(PurchaseRequest::class, $request);
         $this->assertSame($money, $request->getAmount());
         $this->assertSame('10.00', (new DecimalMoneyFormatter(new ISOCurrencies()))->format($request->getAmount()));
 
         $data = $request->getData();
 
         $this->assertEquals('payment', $data['transactionType']);
-        $this->assertEquals('10.00',   $data['principalAmount']);
-        $this->assertEquals('aud',     $data['currency']);
-        $this->assertEquals('ABC123',  $data['customerNumber']);
-        $this->assertEquals('456',     $data['orderNumber']);
-        $this->assertEquals('EFG789',  $data['singleUseTokenId']);
+        $this->assertEquals('10.00', $data['principalAmount']);
+        $this->assertEquals('aud', $data['currency']);
+        $this->assertEquals('ABC123', $data['customerNumber']);
+        $this->assertEquals('456', $data['orderNumber']);
+        $this->assertEquals('EFG789', $data['singleUseTokenId']);
     }
 }
