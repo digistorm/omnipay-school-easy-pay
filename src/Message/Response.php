@@ -97,6 +97,7 @@ class Response extends AbstractResponse
     public function getDataItem(string $key): ?string
     {
         $data = $this->getData();
+
         return $data[$key] ?? null;
     }
 
@@ -111,6 +112,7 @@ class Response extends AbstractResponse
     public function getErrorDataItem(string $key): ?string
     {
         $data = $this->getErrorData();
+
         return $data[$key] ?? null;
     }
 
@@ -139,7 +141,7 @@ class Response extends AbstractResponse
         }
 
         if ($this->isSuccessful()) {
-            return ($this->getStatus()) ? ucfirst($this->getStatus()) : 'Successful';
+            return ($this->getStatus() !== '' && $this->getStatus() !== '0') ? ucfirst($this->getStatus()) : 'Successful';
         }
 
         // default to unsuccessful message
@@ -172,7 +174,7 @@ class Response extends AbstractResponse
      */
     public function getErrorFieldName(): ?string
     {
-        return $this->getErrorDataItem ('fieldName');
+        return $this->getErrorDataItem('fieldName');
     }
 
     /**
@@ -223,9 +225,9 @@ class Response extends AbstractResponse
     /**
      * Set HTTP Response Code
      */
-    public function setHttpResponseCode(string $value): void
+    public function setHttpResponseCode(string|int $value): void
     {
-        $this->httpResponseCode = $value;
+        $this->httpResponseCode = (string) $value;
     }
 
     /**

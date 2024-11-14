@@ -4,9 +4,6 @@ declare(strict_types=1);
 
 namespace Omnipay\SchoolEasyPay\Message;
 
-use Money\Currencies\ISOCurrencies;
-use Money\Formatter\DecimalMoneyFormatter;
-use Money\Money;
 use Omnipay\Common\Exception\InvalidRequestException;
 
 /**
@@ -62,7 +59,7 @@ class PurchaseRequest extends AbstractRequest
         return $this->setParameter('customerReference', $value);
     }
 
-    public function getMerchantUniquePaymentId(): string
+    public function getMerchantUniquePaymentId(): ?string
     {
         return $this->getParameter('merchantUniquePaymentId');
     }

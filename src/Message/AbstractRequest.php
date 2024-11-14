@@ -7,7 +7,7 @@ namespace Omnipay\SchoolEasyPay\Message;
 use Omnipay\Common\Message\ResponseInterface;
 
 /**
- * @link https://www.payway.com.au/rest-docs/index.html
+ * @link https://api.schooleasypay.com.au/swagger/ui/index
  */
 abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 {

@@ -18,39 +18,54 @@ class AbstractRequestTest extends TestCase
         $this->request->initialize();
     }
 
-    public function testApiKeyPublic(): void
+    /**
+     * @dataProvider getSetDataProvider
+     */
+    public function testGetSet(string $subject): void
     {
-        $this->assertSame($this->request, $this->request->setApiKeyPublic('abc123'));
-        $this->assertSame('abc123', $this->request->getApiKeyPublic());
+        $getMethod = 'get' . $subject;
+        $setMethod = 'set' . $subject;
+        $this->assertTrue(method_exists($this->request, $getMethod));
+        $this->assertTrue(method_exists($this->request, $setMethod));
+        $this->assertSame($this->request, $this->request->$setMethod('abc123'));
+        $this->assertSame('abc123', $this->request->$getMethod());
     }
 
-    public function testApiKeySecret(): void
+    public static function getSetDataProvider(): array
     {
-        $this->assertSame($this->request, $this->request->setApiKeySecret('abc123'));
-        $this->assertSame('abc123', $this->request->getApiKeySecret());
+        return [
+            'ApiKey' => ['ApiKey'],
+            'Username' => ['Username'],
+            'Password' => ['Password'],
+            'IdempotencyKey' => ['IdempotencyKey'],
+        ];
     }
 
-    public function testMerchantId(): void
+    public function testGetBaseEndpointInTestMode(): void
     {
-        $this->assertSame($this->request, $this->request->setMerchantId('abc123'));
-        $this->assertSame('abc123', $this->request->getMerchantId());
+        $this->request->setTestMode(true);
+
+        $this->assertEquals('https://apiuat.schooleasypay.com.au/v2', $this->request->getBaseEndpoint());
     }
 
-    public function testUseSecretKey(): void
+    public function testGetBaseEndpointInLiveMode(): void
     {
-        $this->assertSame($this->request, $this->request->setUseSecretKey('abc123'));
-        $this->assertSame('abc123', $this->request->getUseSecretKey());
+        $this->request->setTestMode(false);
+
+        $this->assertEquals('https://api.schooleasypay.com.au/v2', $this->request->getBaseEndpoint());
     }
 
-    public function testSingleUseTokenId(): void
+    public function testGetIdempotencyKeyWhenNotSet(): void
     {
-        $this->assertSame($this->request, $this->request->setSingleUseTokenId('abc123'));
-        $this->assertSame('abc123', $this->request->getSingleUseTokenId());
+        $this->assertNotEmpty($this->request->getIdempotencyKey());
     }
 
-    public function testIdempotencyKey(): void
+    public function testGetRequestHeaders(): void
     {
-        $this->assertSame($this->request, $this->request->setIdempotencyKey('abc123'));
-        $this->assertSame('abc123', $this->request->getIdempotencyKey());
+        $headers = $this->request->getRequestHeaders();
+
+        $this->assertArrayHasKey('Accept', $headers);
+        $this->assertEquals('application/json', $headers['Accept']);
+        $this->assertArrayNotHasKey('Content-Type', $headers);
     }
 }

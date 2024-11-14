@@ -24,8 +24,8 @@ class CreateSingleUseCardTokenRequest extends AbstractRequest
 
         $this->getCard()->validate();
 
-        $expiryDateMonthAsString = (string)$this->getCard()->getExpiryMonth();
-        $expiryDateYearAsString = (string)$this->getCard()->getExpiryYear();
+        $expiryDateMonthAsString = (string) $this->getCard()->getExpiryMonth();
+        $expiryDateYearAsString = (string) $this->getCard()->getExpiryYear();
         // Two-digit month.
         $expiryDateMonth = str_pad($expiryDateMonthAsString, 2, '0', STR_PAD_LEFT);
         // Last two digits of the year only.

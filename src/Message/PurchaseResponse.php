@@ -72,6 +72,7 @@ class PurchaseResponse extends AbstractResponse
     public function getDataItem(string $key): ?string
     {
         $data = $this->getData();
+
         return $data[$key] ?? null;
     }
 
@@ -86,6 +87,7 @@ class PurchaseResponse extends AbstractResponse
     public function getErrorDataItem(string $key): ?string
     {
         $data = $this->getErrorData();
+
         return $data[$key] ?? null;
     }
 
@@ -114,7 +116,7 @@ class PurchaseResponse extends AbstractResponse
         }
 
         if ($this->isSuccessful()) {
-            return ($this->getStatus()) ? ucfirst($this->getStatus()) : 'Successful';
+            return ($this->getStatus() !== '' && $this->getStatus() !== '0') ? ucfirst($this->getStatus()) : 'Successful';
         }
 
         // default to unsuccessful message
