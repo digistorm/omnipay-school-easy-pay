@@ -4,12 +4,13 @@ declare(strict_types=1);
 
 namespace Omnipay\SchoolEasyPay\Message;
 
+use Omnipay\Common\Message\AbstractRequest as CommonAbstractRequest;
 use Omnipay\Common\Message\ResponseInterface;
 
 /**
  * @link https://api.schooleasypay.com.au/swagger/ui/index
  */
-abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
+abstract class AbstractRequest extends CommonAbstractRequest
 {
     abstract public function getEndpoint(): string;
 
@@ -112,7 +113,7 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
 
         $body = $data ? json_encode($data) : null;
 
-        $response = $this->httpClient->request(
+        $httpResponse = $this->httpClient->request(
             $this->getHttpMethod(),
             $this->getEndpoint(),
             $headers,
@@ -120,12 +121,14 @@ abstract class AbstractRequest extends \Omnipay\Common\Message\AbstractRequest
             '1.2' // Enforce TLS v1.2
         );
 
-        $content = $response->getBody()->getContents();
+        $content = $httpResponse->getBody()->getContents();
 
-        $this->response = new Response($this, json_decode($content, true));
+        $response = new Response($this, json_decode($content, true));
 
         // save additional info
-        $this->response->setHttpResponseCode($response->getStatusCode());
+        $response->setHttpResponseCode($httpResponse->getStatusCode());
+
+        $this->response = $response;
 
         return $this->response;
     }

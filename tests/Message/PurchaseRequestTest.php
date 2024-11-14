@@ -10,10 +10,7 @@ use Omnipay\Tests\TestCase;
 
 class PurchaseRequestTest extends TestCase
 {
-    /**
-     * @var PurchaseRequest
-     */
-    protected $request;
+    protected PurchaseRequest $request;
 
     public function setUp(): void
     {
@@ -24,7 +21,7 @@ class PurchaseRequestTest extends TestCase
     {
         $card = new CreditCard($this->getValidCard());
         $this->request->setCardProxy('bdd4c12345e54b00b4e1a2b309442a07');
-        $this->request->setAmount(12.50);
+        $this->request->setAmount('12.50');
         $this->request->setCustomerReference('ABC123');
         $this->request->setCard($card);
 
