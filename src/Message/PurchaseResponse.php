@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Omnipay\SchoolEasyPay\Message;
 
-use http\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 use Omnipay\Common\Message\AbstractResponse;
 use Omnipay\Common\Message\RequestInterface;
 use Symfony\Component\HttpFoundation\Response;
