@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Omnipay\SchoolEasyPay\Message;
 
+use http\Exception\InvalidArgumentException;
 use Omnipay\Common\Message\AbstractResponse;
+use Omnipay\Common\Message\RequestInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -15,6 +17,14 @@ class PurchaseResponse extends AbstractResponse
     protected string $requestId;
 
     protected string $httpResponseCode;
+
+    public function __construct(RequestInterface $request, mixed $data)
+    {
+        if (!is_array($data)) {
+            throw new InvalidArgumentException('Request data must be an array');
+        }
+        parent::__construct($request, $data);
+    }
 
     /**
      * Is the transaction successful?
