@@ -1,17 +1,20 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Omnipay\SchoolEasyPay\Message;
 
-use Money\Currencies\ISOCurrencies;
-use Money\Formatter\DecimalMoneyFormatter;
-use Money\Money;
+use Omnipay\Common\Exception\InvalidRequestException;
 
 /**
  * @link https://www.payway.com.au/rest-docs/index.html#process-a-payment
  */
 class PurchaseRequest extends AbstractRequest
 {
-    public function getData()
+    /**
+     * @throws InvalidRequestException
+     */
+    public function getData(): array
     {
         $this->validate(
             'cardProxy',
@@ -24,18 +27,10 @@ class PurchaseRequest extends AbstractRequest
             'customerReference' => $this->getCustomerReference(),
         ];
 
-        if ($this->getCard()) {
-            $card = $this->getCard();
-            $data['customerName'] = $card->getName();
-        }
+        $card = $this->getCard();
+        $data['customerName'] = $card->getName();
 
-        // Has the Money class been used to set the amount?
-        if ($this->getAmount() instanceof Money) {
-            // Ensure principal amount is formatted as decimal string
-            $data['paymentAmount'] = (new DecimalMoneyFormatter(new ISOCurrencies()))->format($this->getAmount());
-        } else {
-            $data['paymentAmount'] = $this->getAmount();
-        }
+        $data['paymentAmount'] = $this->getAmount();
 
         if ($this->getMerchantUniquePaymentId()) {
             $data['merchantUniquePaymentId'] = $this->getMerchantUniquePaymentId();
@@ -44,56 +39,52 @@ class PurchaseRequest extends AbstractRequest
         return $data;
     }
 
-    public function getCardProxy()
+    public function getCardProxy(): ?string
     {
         return $this->getParameter('cardProxy');
     }
 
-    public function setCardProxy($value)
+    public function setCardProxy(string $value): self
     {
         return $this->setParameter('cardProxy', $value);
     }
 
-    public function getCustomerReference()
+    public function getCustomerReference(): ?string
     {
         return $this->getParameter('customerReference');
     }
 
-    public function setCustomerReference($value)
+    public function setCustomerReference(string $value): self
     {
         return $this->setParameter('customerReference', $value);
     }
 
-    public function getMerchantUniquePaymentId()
+    public function getMerchantUniquePaymentId(): ?string
     {
         return $this->getParameter('merchantUniquePaymentId');
     }
 
-    public function setMerchantUniquePaymentId($value)
+    public function setMerchantUniquePaymentId(string $value): self
     {
         return $this->setParameter('merchantUniquePaymentId', $value);
     }
 
-    public function getEndpoint()
+    public function getEndpoint(): string
     {
         return $this->getBaseEndpoint() . '/payments';
     }
 
-    public function getHttpMethod()
+    public function getHttpMethod(): string
     {
         return 'POST';
     }
 
-    public function getUseSecretKey()
+    public function getUseSecretKey(): bool
     {
         return true;
     }
 
-    /**
-     * @param $data
-     * @return \Omnipay\SchoolEasyPay\Message\PurchaseResponse
-     */
-    protected function createResponse($data)
+    protected function createResponse(mixed $data): PurchaseResponse
     {
         return $this->response = new PurchaseResponse($this, $data);
     }
