@@ -139,8 +139,7 @@ class PurchaseResponse extends AbstractResponse
     public function getCode(): ?string
     {
         return implode(' ', [
-            $this->getResponseCode(),
-            $this->getResponseText(),
+            $this->getResponseMessage(),
             '(' . $this->getHttpResponseCode(),
             $this->getHttpResponseCodeText() . ')',
         ]);
@@ -170,20 +169,9 @@ class PurchaseResponse extends AbstractResponse
         return $this->getErrorDataItem('fieldValue');
     }
 
-    /**
-     * Get Payway Response Code
-     */
-    public function getResponseCode(): ?string
+    public function getResponseMessage(): ?string
     {
-        return $this->getDataItem('responseCode');
-    }
-
-    /**
-     * Get Payway Response Text
-     */
-    public function getResponseText(): ?string
-    {
-        return $this->getDataItem('responseText');
+        return $this->getDataItem('responseMessage');
     }
 
     public function getRequestId(): ?string
