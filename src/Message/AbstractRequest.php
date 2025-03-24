@@ -118,7 +118,6 @@ abstract class AbstractRequest extends CommonAbstractRequest
             $this->getEndpoint(),
             $headers,
             $body ?: null,
-            '1.2' // Enforce TLS v1.2
         );
 
         $content = $httpResponse->getBody()->getContents();
