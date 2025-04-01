@@ -120,7 +120,7 @@ abstract class AbstractRequest extends CommonAbstractRequest
             $body ?: null,
         );
 
-        $content = $httpResponse->getBody()->getContents();
+        $content = (string)$httpResponse->getBody();
 
         $response = new Response($this, json_decode($content, true));
 
