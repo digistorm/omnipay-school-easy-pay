@@ -34,7 +34,12 @@ class PurchaseResponse extends AbstractResponse
         // get response code
         $code = $this->getHttpResponseCode();
 
-        if ($code === '200' || ($code === '201' && $this->isApproved())) {
+        if (
+            // We also get 200 responses in some circumstances when a transaction is unsuccessful, so explicitly
+            // check for a failed state.
+            ($code === '200' && !$this->isFailed()) ||
+            ($code === '201' && $this->isApproved())
+        ) {
             return true;
         }
 
@@ -56,6 +61,11 @@ class PurchaseResponse extends AbstractResponse
     public function isPending(): bool
     {
         return $this->getStatus() === 'Pending';
+    }
+
+    public function isFailed(): bool
+    {
+        return $this->getStatus() === 'Failed';
     }
 
     /**
